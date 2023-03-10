@@ -67,8 +67,13 @@ internal class MessageDetailsViewModel(
                     folder = folder?.toFolderInfo(),
                 )
 
-                MessageDetailsState.DataLoaded(
+                val messageDetailsAppearance = MessageDetailsAppearance(
                     showContactPicture = contactSettingsProvider.isShowContactPicture,
+                    alwaysHideAddToContactsButton = !contactRepository.hasContactPermission(),
+                )
+
+                MessageDetailsState.DataLoaded(
+                    appearance = messageDetailsAppearance,
                     details = messageDetailsUi,
                 )
             } catch (e: Exception) {
@@ -155,7 +160,7 @@ sealed interface MessageDetailsState {
     object Loading : MessageDetailsState
     object Error : MessageDetailsState
     data class DataLoaded(
-        val showContactPicture: Boolean,
+        val appearance: MessageDetailsAppearance,
         val details: MessageDetailsUi,
     ) : MessageDetailsState
 }

@@ -10,6 +10,8 @@ interface ContactRepository {
     fun hasContactFor(emailAddress: EmailAddress): Boolean
 
     fun hasAnyContactFor(emailAddresses: List<EmailAddress>): Boolean
+
+    fun hasContactPermission(): Boolean
 }
 
 interface CachingRepository {
@@ -19,6 +21,7 @@ interface CachingRepository {
 internal class CachingContactRepository(
     private val cache: Cache<EmailAddress, Contact?>,
     private val dataSource: ContactDataSource,
+    private val contactPermissionResolver: ContactPermissionResolver,
 ) : ContactRepository, CachingRepository {
 
     override fun getContactFor(emailAddress: EmailAddress): Contact? {
@@ -44,5 +47,9 @@ internal class CachingContactRepository(
 
     override fun clearCache() {
         cache.clear()
+    }
+
+    override fun hasContactPermission(): Boolean {
+        return contactPermissionResolver.hasContactPermission()
     }
 }

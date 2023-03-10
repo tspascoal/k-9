@@ -21,8 +21,13 @@ internal class CachingContactRepositoryTest {
 
     private val dataSource = mock<ContactDataSource>()
     private val cache = InMemoryCache<EmailAddress, Contact?>()
+    private val contactPermissionResolver = TestContactPermissionResolver(hasPermission = true)
 
-    private val testSubject = CachingContactRepository(cache = cache, dataSource = dataSource)
+    private val testSubject = CachingContactRepository(
+        cache = cache,
+        dataSource = dataSource,
+        contactPermissionResolver = contactPermissionResolver,
+    )
 
     @Before
     fun setUp() {
@@ -139,5 +144,23 @@ internal class CachingContactRepositoryTest {
         testSubject.clearCache()
 
         assertThat(cache[CONTACT_EMAIL_ADDRESS]).isNull()
+    }
+
+    @Test
+    fun `hasContactPermission() without permission`() {
+        contactPermissionResolver.hasContactPermission = false
+
+        val result = testSubject.hasContactPermission()
+
+        assertThat(result).isFalse()
+    }
+
+    @Test
+    fun `hasContactPermission() with permission`() {
+        contactPermissionResolver.hasContactPermission = true
+
+        val result = testSubject.hasContactPermission()
+
+        assertThat(result).isTrue()
     }
 }

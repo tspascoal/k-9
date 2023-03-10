@@ -24,6 +24,7 @@ internal val contactModule = module {
         CachingContactRepository(
             cache = get(named(CACHE_NAME)),
             dataSource = get(),
+            contactPermissionResolver = get(),
         )
     }
     factory<ContactPermissionResolver> {
