@@ -2,6 +2,9 @@ name: CodeQL - Code scanning
 
 on:
   workflow_dispatch:
+  
+env:
+  CODEQL_EXTRACTOR_JAVA_AGENT_ENABLE_KOTLIN: true
 
 jobs:
   codeql-scan:
